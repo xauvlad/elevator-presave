@@ -1,8 +1,10 @@
+"use client";
+
 export default function Home() {
   return (
     <main
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
