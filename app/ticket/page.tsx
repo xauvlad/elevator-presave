@@ -1,19 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-export default function TicketPage() {
-  const [ticket, setTicket] = useState<string | null>(null);
-
-  useEffect(() => {
-    const randomNumber = Math.floor(100000 + Math.random() * 900000);
-    setTicket(`LFT-${randomNumber}`);
-  }, []);
-
+export default function Home() {
   return (
     <main
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -29,27 +20,41 @@ export default function TicketPage() {
           border: "1px solid rgba(255,255,255,0.2)",
           padding: "30px",
           borderRadius: "12px",
+          backdropFilter: "blur(10px)",
           animation: "fadeIn 1.5s ease forwards",
           opacity: 0,
         }}
       >
-        <h2 style={{ marginBottom: "20px" }}>Ваш билет</h2>
+        <h1 style={{ marginBottom: "20px", fontSize: "28px" }}>
+          Музыка для лифта
+        </h1>
 
-        <div
+        <p style={{ marginBottom: "20px", opacity: 0.8 }}>
+          Благодарим за бронирование музыкального маршрута.
+        </p>
+
+        <p style={{ marginBottom: "30px", opacity: 0.6 }}>
+          Ваше внимание зафиксировано системой.
+          <br />
+          Пассажирам с активным пресейвом доступна портретная лотерея.
+        </p>
+
+        <button
           style={{
-            fontSize: "32px",
-            letterSpacing: "4px",
-            marginBottom: "20px",
+            padding: "12px 24px",
+            background: "white",
+            color: "black",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
+          onClick={() => {
+            window.location.href = "/ticket";
           }}
         >
-          {ticket || "..."}
-        </div>
-
-        <p style={{ opacity: 0.7 }}>
-          Сохраните этот номер.
-          <br />
-          Он участвует в розыгрыше портрета.
-        </p>
+          Участвовать в лотерее
+        </button>
       </div>
 
       <style>{`
