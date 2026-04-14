@@ -55,7 +55,7 @@ export default function TicketPage() {
         }}
       >
         <div style={{ fontSize: "12px", opacity: 0.6 }}>
-          СИСТЕМА IDST
+          СИСТЕМА idst
         </div>
 
         <div style={{ fontSize: "18px", marginBottom: "16px" }}>
