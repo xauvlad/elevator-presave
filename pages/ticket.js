@@ -123,22 +123,52 @@ export default function TicketPage() {
         return;
       }
 
-      const imageUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
       const safeTicket = (ticket || "lottery-ticket")
         .replace(/[^a-z0-9-]/gi, "-")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "")
         .toLowerCase();
-
-      link.href = imageUrl;
-      link.download = safeTicket
+      const fileName = safeTicket
         ? `lottery-ticket-${safeTicket}.png`
         : "lottery-ticket.png";
+
+      const isTelegramWebView = /Telegram/i.test(navigator.userAgent || "");
+
+      if (isTelegramWebView) {
+        const file = new File([blob], fileName, { type: "image/png" });
+
+        if (
+          typeof navigator !== "undefined" &&
+          typeof navigator.canShare === "function" &&
+          navigator.canShare({ files: [file] })
+        ) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: "Lottery ticket",
+              text: "IDST ticket",
+            });
+            return;
+          } catch {
+            // Share can be canceled or blocked, continue to open fallback.
+          }
+        }
+      }
+
+      const imageUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = imageUrl;
+      link.download = fileName;
+      link.rel = "noopener noreferrer";
 
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      if (isTelegramWebView) {
+        window.open(imageUrl, "_blank", "noopener,noreferrer");
+      }
 
       setTimeout(() => {
         URL.revokeObjectURL(imageUrl);
