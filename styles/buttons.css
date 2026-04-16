@@ -3,6 +3,13 @@
     --glare-duration: 3.6s;
 }
 
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 .gold-button {
   position: relative;
   isolation: isolate;

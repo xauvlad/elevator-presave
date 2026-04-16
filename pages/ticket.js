@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 export default function TicketPage() {
   const [ticket, setTicket] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [isExistingTicketModal, setIsExistingTicketModal] = useState(false);
   const ticketRef = useRef(null);
   const frameWidth = 720;
   const frameHeight = 405;
@@ -66,6 +68,8 @@ export default function TicketPage() {
 
     if (existingTicket) {
       setTicket(existingTicket);
+      setIsExistingTicketModal(true);
+      setShowRegistrationModal(true);
       return;
     }
 
@@ -74,6 +78,8 @@ export default function TicketPage() {
 
     localStorage.setItem("ticket", newTicket);
     setTicket(newTicket);
+    setIsExistingTicketModal(false);
+    setShowRegistrationModal(true);
 
     fetch("/api/save-ticket", {
       method: "POST",
@@ -123,52 +129,22 @@ export default function TicketPage() {
         return;
       }
 
+      const imageUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
       const safeTicket = (ticket || "lottery-ticket")
         .replace(/[^a-z0-9-]/gi, "-")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "")
         .toLowerCase();
-      const fileName = safeTicket
-        ? `lottery-ticket-${safeTicket}.png`
-        : "lottery-ticket.png";
-
-      const isTelegramWebView = /Telegram/i.test(navigator.userAgent || "");
-
-      if (isTelegramWebView) {
-        const file = new File([blob], fileName, { type: "image/png" });
-
-        if (
-          typeof navigator !== "undefined" &&
-          typeof navigator.canShare === "function" &&
-          navigator.canShare({ files: [file] })
-        ) {
-          try {
-            await navigator.share({
-              files: [file],
-              title: "Lottery ticket",
-              text: "IDST ticket",
-            });
-            return;
-          } catch {
-            // Share can be canceled or blocked, continue to open fallback.
-          }
-        }
-      }
-
-      const imageUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
 
       link.href = imageUrl;
-      link.download = fileName;
-      link.rel = "noopener noreferrer";
+      link.download = safeTicket
+        ? `lottery-ticket-${safeTicket}.png`
+        : "lottery-ticket.png";
 
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      if (isTelegramWebView) {
-        window.open(imageUrl, "_blank", "noopener,noreferrer");
-      }
 
       setTimeout(() => {
         URL.revokeObjectURL(imageUrl);
@@ -292,6 +268,95 @@ export default function TicketPage() {
           Перейти в Telegram
         </button>
       </div>
+
+      {showRegistrationModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="registration-modal-title"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 30,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            background: "rgba(0, 0, 0, 0.58)",
+            backdropFilter: "blur(2px)",
+          }}
+        >
+          <div
+            style={{
+              width: "min(620px, 94vw)",
+              borderRadius: "14px",
+              border: "2px solid rgba(212, 166, 58, 0.95)",
+              background:
+                "linear-gradient(160deg, rgba(12, 50, 34, 0.97) 0%, rgba(8, 31, 22, 0.98) 100%)",
+              color: "#f1dfac",
+              boxShadow:
+                "0 22px 44px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 235, 170, 0.26)",
+              padding: "22px 20px 18px",
+            }}
+          >
+            <h2
+              id="registration-modal-title"
+              style={{
+                margin: "0 0 14px",
+                fontFamily: "bahnschrift, trebuchet ms, sans-serif",
+                letterSpacing: "0.02em",
+                fontSize: "clamp(20px, 2.5vw, 28px)",
+                color: "#ffe9a9",
+                textShadow: "0 0 14px rgba(250, 206, 97, 0.24)",
+              }}
+            >
+              {isExistingTicketModal
+                ? "Каждому по одному..."
+                : "Вы успешно зарегистрировались!"}
+            </h2>
+
+            {isExistingTicketModal ? (
+              <p
+                style={{
+                  margin: 0,
+                  lineHeight: 1.45,
+                  fontSize: "clamp(14px, 1.7vw, 18px)",
+                  color: "rgba(255, 241, 201, 0.92)",
+                }}
+              >
+              </p>
+            ) : (
+              <p
+                style={{
+                  margin: 0,
+                  whiteSpace: "pre-line",
+                  lineHeight: 1.45,
+                  fontSize: "clamp(14px, 1.7vw, 18px)",
+                  color: "rgba(255, 241, 201, 0.92)",
+                }}
+              >
+                {
+                  "Результаты лотереи будут опубликованы в телеграм-канале IDST. Обязательно сохраните талон по кнопке или сделайте скриншот.\nЖелаем удачи!"
+                }
+              </p>
+            )}
+
+            <div style={{ marginTop: "18px", display: "flex", justifyContent: "flex-end" }}>
+              <button
+                className="gold-button ticket-button"
+                style={{ width: "auto", minWidth: "140px", cursor: "pointer" }}
+                onClick={() => {
+                  setShowRegistrationModal(false);
+                }}
+              >
+                {isExistingTicketModal
+                ? ":("
+                : "Спасибо!"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{`
         html,
