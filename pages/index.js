@@ -63,6 +63,7 @@ export default function Home() {
             cursor: "pointer",
             fontSize: "3cqi",
             boxShadow: "0 0 24px rgba(214, 117, 6, 0.56)",
+            marginBottom: "0.001cqi",
           }}
           onClick={() => {
             window.location.href = "/ticket";

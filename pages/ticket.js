@@ -47,11 +47,27 @@ export default function TicketPage() {
         useCORS: true,
         onclone: (clonedDoc) => {
           const clonedTicket = clonedDoc.getElementById("ticket-capture");
+          const clonedTicketArt = clonedDoc.getElementById("ticket-art");
+          const clonedTicketCode = clonedDoc.getElementById("ticket-code");
 
           if (clonedTicket) {
             clonedTicket.style.animation = "none";
             clonedTicket.style.opacity = "1";
-            clonedTicket.style.transform = "translateX(0)";
+          }
+
+          if (clonedTicketArt) {
+            clonedTicketArt.classList.remove("brush-reveal");
+          }
+
+          if (clonedTicketCode) {
+            clonedTicketCode.style.maskImage = "url('/images/scratches2.png')";
+            clonedTicketCode.style.maskSize = "cover";
+            clonedTicketCode.style.maskPosition = "center";
+            clonedTicketCode.style.maskRepeat = "no-repeat";
+            clonedTicketCode.style.WebkitMaskImage = "url('/images/scratches2.png')";
+            clonedTicketCode.style.WebkitMaskSize = "cover";
+            clonedTicketCode.style.WebkitMaskPosition = "center";
+            clonedTicketCode.style.WebkitMaskRepeat = "no-repeat";
           }
         },
       });
@@ -91,7 +107,6 @@ export default function TicketPage() {
         fontFamily: "monospace",
         padding: "20px",
         boxSizing: "border-box",
-        overflowX: "hidden",
       }}
     >
       <div
@@ -105,12 +120,15 @@ export default function TicketPage() {
           maxWidth: "92vw",
           maxHeight: "52vw",
           aspectRatio: "16 / 9",
-          animation: "ticketSlideIn 1.2s cubic-bezier(0.2, 0.9, 0.24, 1) forwards",
+          animation: "ticketSlideIn 1.1s cubic-bezier(0.2, 0.9, 0.24, 1) forwards",
+          willChange: "transform, opacity",
           opacity: 0,
           overflow: "hidden",
         }}
       >
         <div
+          id="ticket-art"
+          className="ticket-reveal"
           style={{
             position: "absolute",
             inset: 0,
@@ -122,6 +140,7 @@ export default function TicketPage() {
         >
       
         <div
+          id="ticket-code"
           style={{
             position: "absolute",
             top: "62%",
@@ -139,9 +158,11 @@ export default function TicketPage() {
             maskImage: "url('/images/scratches2.png')",
             maskSize: "cover",
             maskPosition: "center",
+            maskRepeat: "no-repeat",
             WebkitMaskImage: "url('/images/scratches2.png')",
             WebkitMaskSize: "cover",
             WebkitMaskPosition: "center",
+            WebkitMaskRepeat: "no-repeat",
           }}
         >
           {ticket || "..."}
@@ -193,7 +214,6 @@ export default function TicketPage() {
           margin: 0;
           padding: 0;
           min-height: 100%;
-          overflow-x: hidden;
           background: black;
         }
 
